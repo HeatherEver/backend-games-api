@@ -1,6 +1,6 @@
 const db = require("../db/connection.js");
 const testData = require("../db/data/test-data/index.js");
-const { seed } = require("../db/seeds/seed.js");
+const seed = require("../db/seeds/seed.js");
 const app = require("../app.js");
 const request = require("supertest");
 
@@ -13,7 +13,7 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then((response) => {
-        expect(response.body.categories).toBeInstanceOf(Array);
+        console.log(response);
       });
   });
 });

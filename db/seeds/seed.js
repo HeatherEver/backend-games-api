@@ -136,7 +136,6 @@ const seed = (data) => {
         RETURNING *`,
         formattedCommentData
       );
-      console.log(queryStr);
       return db.query(queryStr);
     });
 };
