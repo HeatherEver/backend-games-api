@@ -1,3 +1,4 @@
+const { query } = require('../db/connection');
 const db = require('../db/connection');
 
 exports.fetchReviewById = (review_id) => {
@@ -95,4 +96,43 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
         return rows;
       });
   }
+};
+
+exports.fetchReviewComments = (review_id) => {
+  return db
+    .query(
+      `
+  SELECT comments.*
+  FROM comments
+  LEFT JOIN users ON comments.author = users.username
+  WHERE comments.review_id = $1;`,
+      [review_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Path not found' });
+      }
+      return rows;
+    });
+};
+
+exports.publishCommentOnReview = (review_id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({ status: 400, msg: 'Bad request :(' });
+  }
+
+  return db
+    .query(
+      `INSERT INTO comments (author, body, review_id)
+  VALUES ($1, $2, $3)
+  RETURNING *;
+  `,
+      [username, body, review_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'Path not found' });
+      }
+      return rows;
+    });
 };

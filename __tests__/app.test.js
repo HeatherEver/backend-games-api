@@ -248,5 +248,122 @@ describe('GET || /api/reviews', () => {
 });
 
 describe('GET || /api/reviews/:review_id/comments', () => {
-  test('200 || return an array of objects containing the comments for a specific review', () => {});
+  test('200 || return an array of objects containing the comments for a specific review', () => {
+    return request(app)
+      .get(`/api/reviews/3/comments`)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toBeInstanceOf(Array);
+        comment.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              body: expect.any(String),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              review_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  //COME BACK TO THIS
+  // test('200 || return an empty array if the review_id passed has no comments', () => {
+  //   return request(app)
+  //     .get('/api/reviews/1/comments')
+  //     .expect(200)
+  //     .then(({ body: { comment } }) => {
+  //       expect(comment).teEqual([]);
+  //     });
+});
+test('400 || responds with bad request error when passed in an invalid review_id', () => {
+  return request(app)
+    .get(`/api/reviews/dog/comments`)
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe('Bad request :(');
+    });
+});
+test('404 || responds with path not found error when passed in a review_id that does not exist', () => {
+  return request(app)
+    .get(`/api/reviews/35565/comments`)
+    .expect(404)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe('Path not found');
+    });
+});
+
+describe('POST || /api/reviews/:review_id/comments', () => {
+  test('201 || returns the new posted comment', () => {
+    const newComment = {
+      username: 'philippaclaire9',
+      body: 'This game is the best game ever, yaaaayy',
+    };
+    return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { newComment } }) => {
+        expect(newComment).toBeInstanceOf(Array);
+        newComment.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              votes: expect.any(Number),
+              author: expect.any(String),
+              body: expect.any(String),
+              review_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test('400 || if the post object is empty send back bad request error', () => {
+    const newComment = {};
+    return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad request :(');
+      });
+  });
+  test('400 || if username field is empty send back bad request error', () => {
+    const newComment = {
+      body: 'hgvajbknsfldg',
+    };
+    return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad request :(');
+      });
+  });
+  test('400 || if review_id is an invalid entry return bad request error', () => {
+    const newComment = {
+      username: 'mallionaire',
+      body: 'best game EVERR',
+    };
+    return request(app)
+      .post('/api/reviews/dog/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad request :(');
+      });
+  });
+  test('404 || if review_id entered valid but does not exist return path not found error', () => {
+    const newComment = {
+      username: 'mallionaire',
+      body: 'best game EVERR',
+    };
+    return request(app)
+      .post('/api/reviews/14567/comments')
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
+      });
+  });
 });
