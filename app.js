@@ -17,8 +17,8 @@ app.all('/*'),
   };
 
 app.get('/'),
-  (req, res, next) => {
-    res.status(200).send({ msg: "hello from heather's game" });
+  (req, res) => {
+    res.status(200).send({ msg: "hello from heather's games" });
   };
 
 app.use(handlePSQL400Errors);
