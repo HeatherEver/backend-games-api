@@ -5,17 +5,17 @@ require('dotenv').config({
   path: `${__dirname}/../.env.${ENV}`,
 });
 
-if (!process.env.PGDATABASE) {
-  throw new Error('PGDATABASE not set or DATABASE_URL is not set');
+if (!process.env.PGDATABASE && !process.env.DATABASE_URL) {
+  throw new Error('PGDATABASE or DATABASE_URL is not set');
 }
-// const config =
-//   ENV === 'production'
-//     ? {
-//         connectionString: process.env.DATABASE_URL,
-//         ssl: {
-//           rejectUnauthorized: false,
-//         },
-//       }
-//     : {};
+const config =
+  ENV === 'production'
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+    : {};
 
-module.exports = new Pool();
+module.exports = new Pool(config);
