@@ -164,7 +164,7 @@ describe('PATCH || /api/reviews/:review_id', () => {
 });
 
 describe('GET || /api/reviews', () => {
-  test('returns an array of review objects with all the properties', () => {
+  test('200 || returns an array of review objects with all the properties', () => {
     return request(app)
       .get('/api/reviews')
       .expect(200)
@@ -186,16 +186,63 @@ describe('GET || /api/reviews', () => {
         });
       });
   });
-  test('accept a query and returns the reviews in order of query (default to date)', () => {
+  test('200 || accept a query and returns the reviews in order of query', () => {
     return request(app)
       .get(`/api/reviews?sort_by=comment_count`)
       .expect(200)
       .then(({ body: { reviews } }) => {
-        console.log(reviews);
         expect(reviews).toBeSortedBy('comment_count', {
           descending: true,
           coerce: true,
         });
+      });
+  });
+  test('200 || accept a query and returns the reviews in default order (date and descending)', () => {
+    return request(app)
+      .get(`/api/reviews`)
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews).toBeSortedBy('created_at', { descending: true });
+      });
+  });
+  test('200 || accept a category and return games in that category', () => {
+    return request(app)
+      .get(`/api/reviews?category=euro+game`)
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews).toBeSortedBy('title', { descending: false });
+      });
+  });
+  test('200 || accept a query a return reviews ordered by title in ascending order', () => {
+    return request(app)
+      .get(`/api/reviews?sort_by=title&&order=asc`)
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews).toBeSortedBy('title', { descending: false });
+      });
+  });
+  test('400 || when an incorrect sort_by is given, return a bad request error', () => {
+    return request(app)
+      .get(`/api/reviews?sort_by=elephant`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('invalid sort by query');
+      });
+  });
+  test('400 || when an invalid order query is passed return a bad request error', () => {
+    return request(app)
+      .get(`/api/reviews?sort_by=title&&order=phone`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('invalid order query');
+      });
+  });
+  test("404 || when a category doesn't exist but is a valid query", () => {
+    return request(app)
+      .get(`/api/reviews?category=dance`)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
       });
   });
 });

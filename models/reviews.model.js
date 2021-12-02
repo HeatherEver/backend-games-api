@@ -41,7 +41,6 @@ exports.changeReviewVotes = (review_id, inc_votes) => {
 };
 
 exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
-  console.log(sort_by);
   const columns = [
     'owner',
     'title',
@@ -55,7 +54,7 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
     return Promise.reject({ status: 400, msg: 'invalid sort by query' });
   }
 
-  if (!['ASC', 'DESC'].includes(order)) {
+  if (!['ASC', 'asc', 'DESC', 'desc'].includes(order)) {
     return Promise.reject({ status: 400, msg: 'invalid order query' });
   }
 
@@ -73,7 +72,9 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
         [category]
       )
       .then(({ rows }) => {
-        console.log(rows);
+        if (rows.length === 0) {
+          return Promise.reject({ status: 404, msg: 'Path not found' });
+        }
         return rows;
       });
   } else {
@@ -88,7 +89,9 @@ exports.fetchReviews = (sort_by = 'created_at', order = 'DESC', category) => {
       ORDER BY ${sort_by} ${order};`
       )
       .then(({ rows }) => {
-        console.log(rows);
+        if (rows.length === 0) {
+          return Promise.reject({ status: 404, msg: 'Path not found' });
+        }
         return rows;
       });
   }
