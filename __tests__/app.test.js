@@ -246,3 +246,7 @@ describe('GET || /api/reviews', () => {
       });
   });
 });
+
+describe('GET || /api/reviews/:review_id/comments', () => {
+  test('200 || return an array of objects containing the comments for a specific review', () => {});
+});
