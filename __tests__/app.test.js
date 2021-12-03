@@ -267,30 +267,23 @@ describe('GET || /api/reviews/:review_id/comments', () => {
         });
       });
   });
-  //COME BACK TO THIS
-  // test('200 || return an empty array if the review_id passed has no comments', () => {
-  //   return request(app)
-  //     .get('/api/reviews/1/comments')
-  //     .expect(200)
-  //     .then(({ body: { comment } }) => {
-  //       expect(comment).teEqual([]);
-  //     });
-});
-test('400 || responds with bad request error when passed in an invalid review_id', () => {
-  return request(app)
-    .get(`/api/reviews/dog/comments`)
-    .expect(400)
-    .then(({ body: { msg } }) => {
-      expect(msg).toBe('Bad request :(');
-    });
-});
-test('404 || responds with path not found error when passed in a review_id that does not exist', () => {
-  return request(app)
-    .get(`/api/reviews/35565/comments`)
-    .expect(404)
-    .then(({ body: { msg } }) => {
-      expect(msg).toBe('Path not found');
-    });
+
+  test('400 || responds with bad request error when passed in an invalid review_id', () => {
+    return request(app)
+      .get(`/api/reviews/dog/comments`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad request :(');
+      });
+  });
+  test('404 || responds with path not found error when passed in a review_id that does not exist', () => {
+    return request(app)
+      .get(`/api/reviews/35565/comments`)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
+      });
+  });
 });
 
 describe('POST || /api/reviews/:review_id/comments', () => {
@@ -350,19 +343,19 @@ describe('POST || /api/reviews/:review_id/comments', () => {
         expect(msg).toBe('Bad request :(');
       });
   });
-  // test.only('404 || if review_id entered valid but does not exist return path not found error', () => {
-  //   const newComment = {
-  //     username: 'mallionaire',
-  //     body: 'best game EVERR',
-  //   };
-  //   return request(app)
-  //     .post('/api/reviews/14567/comments')
-  //     .send(newComment)
-  //     .expect(404)
-  //     .then(({ body: { msg } }) => {
-  //       expect(msg).toBe('Path not found');
-  //     });
-  // });
+  test('404 || if review_id entered valid but does not exist return path not found error', () => {
+    const newComment = {
+      username: 'mallionaire',
+      body: 'best game EVERR',
+    };
+    return request(app)
+      .post('/api/reviews/14567/comments')
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
+      });
+  });
 });
 
 describe('DELETE || /api/comments/:comment_id', () => {
@@ -392,6 +385,14 @@ describe('DELETE || /api/comments/:comment_id', () => {
   });
 });
 
-// describe('GET || /api', () => {
-//   test('200 || return all the available endpoints on the API', () => {});
-// });
+describe('GET || /api', () => {
+  test('200 || return all the available endpoints on the API', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        expect(typeof body).toBe('object');
+      });
+  });
+});
