@@ -1,4 +1,3 @@
-const { query } = require('../db/connection');
 const db = require('../db/connection');
 
 exports.fetchReviewById = (review_id) => {
@@ -133,6 +132,6 @@ exports.publishCommentOnReview = (review_id, username, body) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: 'Path not found' });
       }
-      return rows;
+      return rows[0];
     });
 };

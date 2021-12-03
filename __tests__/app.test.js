@@ -304,18 +304,15 @@ describe('POST || /api/reviews/:review_id/comments', () => {
       .send(newComment)
       .expect(201)
       .then(({ body: { newComment } }) => {
-        expect(newComment).toBeInstanceOf(Array);
-        newComment.forEach((comment) => {
-          expect(comment).toEqual(
-            expect.objectContaining({
-              votes: expect.any(Number),
-              author: expect.any(String),
-              body: expect.any(String),
-              review_id: expect.any(Number),
-              created_at: expect.any(String),
-            })
-          );
-        });
+        expect(newComment).toEqual(
+          expect.objectContaining({
+            votes: expect.any(Number),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: expect.any(Number),
+            created_at: expect.any(String),
+          })
+        );
       });
   });
   test('400 || if the post object is empty send back bad request error', () => {
@@ -353,17 +350,48 @@ describe('POST || /api/reviews/:review_id/comments', () => {
         expect(msg).toBe('Bad request :(');
       });
   });
-  test('404 || if review_id entered valid but does not exist return path not found error', () => {
-    const newComment = {
-      username: 'mallionaire',
-      body: 'best game EVERR',
-    };
+  // test.only('404 || if review_id entered valid but does not exist return path not found error', () => {
+  //   const newComment = {
+  //     username: 'mallionaire',
+  //     body: 'best game EVERR',
+  //   };
+  //   return request(app)
+  //     .post('/api/reviews/14567/comments')
+  //     .send(newComment)
+  //     .expect(404)
+  //     .then(({ body: { msg } }) => {
+  //       expect(msg).toBe('Path not found');
+  //     });
+  // });
+});
+
+describe('DELETE || /api/comments/:comment_id', () => {
+  test('204 || return no content', () => {
     return request(app)
-      .post('/api/reviews/14567/comments')
-      .send(newComment)
+      .delete('/api/comments/2')
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test('400 || return error when the comment_id is invalid', () => {
+    return request(app)
+      .delete('/api/comments/dog')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Bad request :(');
+      });
+  });
+  test('404 || return an error when the comment_id does not exist', () => {
+    return request(app)
+      .delete('/api/comments/546')
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe('Path not found');
       });
   });
 });
+
+// describe('GET || /api', () => {
+//   test('200 || return all the available endpoints on the API', () => {});
+// });
