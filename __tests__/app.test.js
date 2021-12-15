@@ -391,8 +391,53 @@ describe('GET || /api', () => {
       .get('/api')
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(typeof body).toBe('object');
+      });
+  });
+});
+
+describe('GET || /api/users', () => {
+  test('200 || return all the usernames from users', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users[0].username).toBe('mallionaire');
+        expect(body.users[1].username).toBe('philippaclaire9');
+        expect(body.users[3].username).toBe('dav3rid');
+      });
+  });
+});
+
+describe('GET || /api/users/:username', () => {
+  test('200 || return an object containing the selected usernames username, URL, name', () => {
+    return request(app)
+      .get('/api/users/mallionaire')
+      .expect(200)
+      .then(({ body: { user } }) => {
+        expect(user[0]).toEqual(
+          expect.objectContaining({
+            username: expect.any(String),
+            avatar_url: expect.any(String),
+            name: expect.any(String),
+          })
+        );
+      });
+  });
+  test('400 || return error when the username is invalid', () => {
+    return request(app)
+      .get('/api/users/346')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
+      });
+  });
+  test('404 || return an error when the username does not exist', () => {
+    return request(app)
+      .get('/api/users/lemon')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe('Path not found');
       });
   });
 });
