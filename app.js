@@ -20,11 +20,6 @@ app.all('/*'),
     res.status(404).send({ msg: 'path not found' });
   };
 
-// app.use('/'),
-//   (req, res) => {
-//     res.status(200).send({ msg: "hello from heather's games" });
-//   };
-
 app.use(handlePSQL400Errors);
 app.use(handleCustomErrors);
 app.use(handle500Errors);
