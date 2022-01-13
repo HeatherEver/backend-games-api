@@ -83,7 +83,7 @@
       "created_at": "1511354613389"
     }
   },
-  "DELETE /api/comments/comment_id": {
+  "DELETE /api/comments/:comment_id": {
     "description": "allows the client to delete a comment",
     "queries": []
   }
