@@ -72,7 +72,7 @@
       }
     ]
   },
-  "POST /api/reviews/review_id/comments": {
+  "POST /api/reviews/:review_id/comments": {
     "description": "allows the client to post a comment to the selected review and returns the new comment",
     "queries": [],
     "exampleResponse": {
